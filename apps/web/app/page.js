@@ -39,12 +39,14 @@ export default function Home() {
   const [analysisId, setAnalysisId] = useState(null);
   const [sheet, setSheet] = useState(null);
   const [error, setError] = useState("");
+  const [apiOffline, setApiOffline] = useState(false);
   const [doneSteps, setDoneSteps] = useState(0);
   const fileRef = useRef(null);
   const t = lang === "hi" ? hi : en;
 
   async function analyse(fileOrBlob, filename) {
     setError("");
+    setApiOffline(false);
     setScreen("reading");
     setDoneSteps(0);
     STEPS.forEach((_, i) => setTimeout(() => setDoneSteps(i + 1), 450 * (i + 1)));
@@ -64,8 +66,27 @@ export default function Home() {
       setReport(rep);
       setScreen("verdict");
     } catch (e) {
-      setError(e.message);
-      setScreen("home");
+      // Demo fallback: if the API is not reachable (e.g. backend not
+      // deployed yet), show the planted-issue sample report locally
+      // and label it honestly, instead of a dead demo.
+      const fallback = {
+        verdict: "red",
+        summary_en: "Ask 3 things before you sign.",
+        summary_hi: "Sign karne se pehle 3 baatein poochhein.",
+        top_cards: [
+          { rule_id: "R-POSS-GRACE", severity: "red", title_en: "Possession date can slip by 18 months", title_hi: "Possession date 18 mahine khisak sakti hai", quote: "The Promoter shall be entitled to a grace period of eighteen (18) months beyond the possession date.", clause_ref: "Clause C7", ask_en: "Ask the builder to remove the grace period.", ask_hi: "Builder se grace period hatane ko kaho." },
+          { rule_id: "R-INTEREST-UNEQUAL", severity: "red", title_en: "You pay more on delays than the builder pays you", title_hi: "Aap builder se zyada jurmana doge", quote: "Interest at 24% per annum, compounded monthly, shall be payable by the Allottee on delayed payments.", clause_ref: "Clause C11", ask_en: "Ask for the same interest rate on both sides.", ask_hi: "Dono taraf ek hi interest rate maango." },
+          { rule_id: "R-ARBITRATION", severity: "amber", title_en: "Disputes sent to arbitration", title_hi: "Vivad arbitration mein bheja jayega", quote: "All disputes shall be referred to arbitration under the Arbitration and Conciliation Act, 1996.", clause_ref: "Clause C19", ask_en: "Ask that RERA remedies stay available to you.", ask_hi: "Poochho ki RERA wale upay aapke liye khule rahein." },
+        ],
+        all_findings: [],
+        checks_run: 14,
+        extraction_method: "sample-fallback",
+        ocr_used: false,
+        pages_to_retake: [],
+      };
+      setReport(fallback);
+      setApiOffline(true);
+      setScreen("verdict");
     }
   }
 
@@ -84,7 +105,7 @@ export default function Home() {
 
   function reset() {
     if (analysisId) fetch(`${API}/v1/analyses/${analysisId}`, { method: "DELETE" }).catch(() => {});
-    setReport(null); setAnalysisId(null); setSheet(null); setScreen("home");
+    setReport(null); setAnalysisId(null); setSheet(null); setApiOffline(false); setScreen("home");
   }
 
   return (
@@ -141,6 +162,11 @@ export default function Home() {
               {lang === "hi" ? report.summary_hi : report.summary_en}
             </p>
             <span className="chip">14 checks run · {report.verdict.toUpperCase()}</span>
+            {apiOffline ? (
+              <p style={{ fontSize: 14, color: "#92400e", marginTop: 10 }}>
+                ⚠ API not reachable — sample report shown. Deploy the API and set NEXT_PUBLIC_API_URL for live analysis.
+              </p>
+            ) : null}
             {report.pages_to_retake?.length ? (
               <p style={{ fontSize: 15, color: "#92400e", marginTop: 10 }}>
                 ⚠ Weak pages, please retake: {report.pages_to_retake.join(", ")}
