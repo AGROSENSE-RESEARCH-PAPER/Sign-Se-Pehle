@@ -10,8 +10,10 @@ Upload a builder-buyer Agreement for Sale, get one clear verdict before you sign
 - Delete by default: document and text are removed unless the user saves the report.
 
 ## Live demo
-- **Web (Vercel, public):** https://sign-se-pehle-h34ud34ce-vivekbartwal158-5099s-projects.vercel.app/
-- **API:** not deployed yet — deploy it with the Render blueprint below, then set `NEXT_PUBLIC_API_URL` on the Vercel project and redeploy. Until then the web demo shows the planted-issue sample report (labelled as a sample) when the API is unreachable.
+- **Web (GitHub Pages, public):** https://AGROSENSE-RESEARCH-PAPER.github.io/Sign-Se-Pehle/
+- **Web (Vercel, public, backup):** https://sign-se-pehle-h34ud34ce-vivekbartwal158-5099s-projects.vercel.app/
+- **API:** not deployed yet — deploy it with the Render blueprint below, then set the repo variable `NEXT_PUBLIC_API_URL` (and the Vercel env var, for the Vercel copy) and redeploy. Until then the web demo shows the planted-issue sample report (labelled as a sample) when the API is unreachable.
+- **Note:** GitHub Pages hosts static sites only — it cannot run the FastAPI backend. The Pages site is the frontend; the API still needs Render (or any Python host).
 
 ## Deploy the API on Render
 1. Render → New → Web Service → Build from the `AGROSENSE-RESEARCH-PAPER/Sign-Se-Pehle` GitHub repo (or "New from Blueprint" with `render.yaml`).

@@ -1,0 +1,56 @@
+# Deploy the Next.js web app to GitHub Pages (static export).
+# Repo Settings -> Pages -> Build and deployment -> Source: GitHub Actions
+# (one-time, owner only). After that, every push to main redeploys.
+# API URL: set a repo variable NEXT_PUBLIC_API_URL to the Render API
+# URL when it exists; without it the site shows the labelled sample
+# report when the API is unreachable.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/web/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install and build (static export)
+        working-directory: apps/web
+        env:
+          NEXT_PUBLIC_BASE_PATH: /Sign-Se-Pehle
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+        run: |
+          npm ci
+          npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/out
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

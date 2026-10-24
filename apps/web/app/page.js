@@ -9,6 +9,8 @@ import en from "../messages/en.json";
 import hi from "../messages/hi.json";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Base path for GitHub Pages project sites (/Sign-Se-Pehle); empty on Vercel.
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 // Same planted-issue sample as eval/sample_agreement.txt, so the
 // "Try a sample" demo works even without a file on hand.
@@ -109,8 +111,8 @@ export default function Home() {
   }
 
   return (
-    <div className="phone">
-      {screen === "home" ? <div className="toran" /> : null}
+    <div className="phone" style={{ backgroundImage: `url(${BASE}/assets/floral-swirl.jpg)`, backgroundSize: 340, backgroundRepeat: "repeat", backgroundBlendMode: "multiply" }}>
+      {screen === "home" ? <div className="toran" style={{ backgroundImage: `url(${BASE}/assets/paisley.jpg)` }} /> : null}
       <header>
         <div className="brand">Sign <span>Se</span> Pehle</div>
         <LangToggle lang={lang} onChange={setLang} />
@@ -122,7 +124,7 @@ export default function Home() {
           <p className="sub">{t.sub}</p>
           <div className="hero">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/assets/marble-gold.jpg" alt="" />
+            <img src={`${BASE}/assets/marble-gold.jpg`} alt="" />
             <span className="cap">{t.cap}</span>
           </div>
           {error ? <div className="error">{error}</div> : null}
