@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff9f0" />
+    <meta name="description" content="A synthetic product demo showing how Sign Se Pehle could help homebuyers prepare questions about an agreement." />
+    <title>Sign Se Pehle — Demo agreement review journey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#app">Skip to content</a>
+    <header class="site-header">
+      <button class="brand reset-button" data-route="home" aria-label="Sign Se Pehle home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v9h13v-9M9.5 19v-5h5v5"/></svg>
+        </span>
+        <span><strong>Sign Se Pehle</strong><small>पहले समझें, फिर हस्ताक्षर करें</small></span>
+      </button>
+      <nav aria-label="Main navigation">
+        <button class="nav-link reset-button" data-route="home">Home</button>
+        <button class="nav-link reset-button" data-route="setup">How it works</button>
+        <button class="nav-link reset-button" data-route="verdict">Sample report</button>
+        <button class="nav-link reset-button" data-route="actions">Next steps</button>
+      </nav>
+      <div class="header-actions">
+        <button class="locale-toggle" id="locale-toggle" type="button" aria-pressed="false"><span>हिंदी</span><b>English</b></button>
+        <button class="button button-small" data-route="setup">Try the demo</button>
+      </div>
+      <button class="menu reset-button" id="menu-button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open navigation">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <div class="mobile-nav" id="mobile-nav" hidden>
+        <button data-route="home">Home</button><button data-route="setup">How it works</button><button data-route="verdict">Sample report</button><button data-route="actions">Next steps</button>
+      </div>
+    </header>
+    <div class="demo-banner"><strong>Interactive product demo</strong><span>Uses one synthetic agreement. Do not upload personal documents.</span></div>
+    <main id="app" tabindex="-1"></main>
+    <footer>
+      <div class="brand footer-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v9h13v-9M9.5 19v-5h5v5"/></svg></span><span><strong>Sign Se Pehle</strong><small>सही सवाल, सही समय</small></span></div>
+      <div class="footer-links"><button data-modal="privacy">Privacy</button><button data-modal="scope">Demo scope</button><button data-modal="disclaimer">Disclaimer</button></div>
+      <p>Illustrative demo · Not legal advice</p>
+    </footer>
+    <div id="dialog-root"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
