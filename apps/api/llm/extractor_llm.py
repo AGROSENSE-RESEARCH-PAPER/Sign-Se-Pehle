@@ -4,6 +4,8 @@ re-validated by the quote guard in the caller. Anything that fails
 either check falls back to the code-only term for that field."""
 import os
 
+from pipeline.redact import redact_pii
+
 from .client import complete_json, configured
 
 _PROMPT_PATH = os.path.join(os.path.dirname(__file__), "prompts", "extraction.md")
@@ -55,7 +57,11 @@ def extract_terms_llm(clauses, call=None):
     configured or its call/parsing fails. `call` is injectable for tests."""
     if call is None and not configured():
         return None
-    text = "\n\n".join(f"[{c['id']}] {c['text']}" for c in clauses)
+    # PII minimisation: the LLM sees redacted text only. Quotes the LLM
+    # returns are still verified against the ORIGINAL clauses by the
+    # caller, so a redacted quote cannot pass the guard (see
+    # pipeline/redact.py for the full trade-off note).
+    text = redact_pii("\n\n".join(f"[{c['id']}] {c['text']}" for c in clauses))
     # Cap the prompt so one analysis stays cheap and fast.
     text = text[:100_000]
     try:

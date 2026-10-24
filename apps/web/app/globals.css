@@ -43,6 +43,8 @@ h2{font-size:21px;color:var(--maroon);margin:26px 0 12px}
 .circle.red{background:#dc2626;box-shadow:0 0 0 10px rgba(220,38,38,.18)}
 .circle.amber{background:#f59e0b;box-shadow:0 0 0 10px rgba(245,158,11,.18)}
 .circle.green{background:var(--teal);box-shadow:0 0 0 10px rgba(15,118,110,.18)}
+.circle.limited_clear{background:var(--teal);box-shadow:0 0 0 10px rgba(15,118,110,.18);font-size:16px}
+.circle.incomplete{background:#6b7280;box-shadow:0 0 0 10px rgba(107,114,128,.18);font-size:16px}
 .verdict-line{font-size:22px;font-weight:800;color:var(--maroon);margin:0 0 6px}
 .chip{display:inline-block;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:999px;padding:6px 11px;font-size:13px;font-weight:700}
 .steps{display:grid;gap:8px;margin:14px 0}
@@ -57,4 +59,27 @@ h2{font-size:21px;color:var(--maroon);margin:26px 0 12px}
 .row>*{flex:1}
 .disclaimer{font-size:13px;line-height:1.55;color:var(--muted);text-align:center;margin-top:22px}
 .hidden{display:none}
+/* State screen (v1: Uttarakhand only, per Final PRD F15). */
+.state-block{margin:0 0 6px}
+.state-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0 0 12px}
+.state-btn{min-height:48px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font-size:15px;font-weight:700;cursor:pointer;padding:8px 10px}
+.state-btn.selected{background:var(--maroon);color:#fff;border-color:var(--maroon)}
+.state-ok{font-size:15px;line-height:1.5;color:var(--teal);font-weight:700;margin:0 0 6px}
 .error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.5;margin:12px 0}
+.narrow{max-width:640px;margin-left:auto;margin-right:auto}
+/* Desktop: the phone column becomes a real desktop layout instead of
+   a narrow strip with empty sides. Mobile (<=767px) is unchanged. */
+@media (min-width:768px){
+  .phone{max-width:1080px}
+  header{padding:22px 48px 4px}
+  main{padding:12px 48px 40px}
+  main.narrow{padding:12px 20px 40px}
+  .home-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  .home-hero h1{font-size:48px;margin-top:24px}
+  .home-hero .hero img{height:300px}
+  .home-hero .btn{max-width:420px}
+  .home-how{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .home-how .card{margin:0}
+  .home-how h2{grid-column:1/-1;margin-bottom:0}
+  .home-how .disclaimer{grid-column:1/-1}
+}

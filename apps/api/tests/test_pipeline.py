@@ -25,7 +25,12 @@ def test_sample_agreement_end_to_end():
         data={"state": "baseline", "language": "en"},
     )
     assert r.status_code == 200
-    rep = c.get(f"/v1/analyses/{r.json()['id']}/report").json()
+    # Track 3: report requires the session_token returned by POST.
+    created = r.json()
+    rep = c.get(
+        f"/v1/analyses/{created['id']}/report",
+        headers={"Authorization": f"Bearer {created['session_token']}"},
+    ).json()
     assert rep["verdict"] == "red"
     assert len(rep["top_cards"]) == 3
     # No quote, no flag: every top card carries a verbatim quote.

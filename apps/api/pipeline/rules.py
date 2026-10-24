@@ -73,10 +73,10 @@ def run_rules(terms, clauses):
                 {"clause_id": None, "quote": None},
             )
         )
-    # Quote guard: drop every finding whose quote is not in its clause.
-    # The "missing" findings have no quote by design, so they are kept
-    # only when no quoted finding exists — otherwise they would drown
-    # the top-3 cards in unactionable noise. MVP choice, documented.
-    quoted = [f for f in raw if f.get("quote") and verify(f, clauses)]
-    missing = [f for f in raw if not f.get("quote")]
-    return quoted + (missing if not quoted else [])
+    # Quote guard (Final PRD F6, "no quote, no flag"): ONLY findings
+    # whose quote appears verbatim in their clause may surface. The
+    # "missing" findings (possession/price/carpet absent) have no quote
+    # by definition, so they are never visible findings: a missing term
+    # is a coverage gap (see pipeline/coverage.py), not a card. Dropping
+    # them here is what keeps an unquoted finding from ever rendering.
+    return [f for f in raw if f.get("quote") and verify(f, clauses)]
