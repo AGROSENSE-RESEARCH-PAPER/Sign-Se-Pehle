@@ -9,6 +9,16 @@ Upload a builder-buyer Agreement for Sale, get one clear verdict before you sign
 - Disclaimer on every report: this is a checklist, not legal advice. Ask a lawyer before you sign.
 - Delete by default: document and text are removed unless the user saves the report.
 
+## Live demo
+- **Web (Vercel, public):** https://sign-se-pehle-h34ud34ce-vivekbartwal158-5099s-projects.vercel.app/
+- **API:** not deployed yet — deploy it with the Render blueprint below, then set `NEXT_PUBLIC_API_URL` on the Vercel project and redeploy. Until then the web demo shows the planted-issue sample report (labelled as a sample) when the API is unreachable.
+
+## Deploy the API on Render
+1. Render → New → Web Service → Build from the `AGROSENSE-RESEARCH-PAPER/Sign-Se-Pehle` GitHub repo (or "New from Blueprint" with `render.yaml`).
+2. Environment: Docker, Dockerfile `./apps/api/Dockerfile`, context `./apps/api`, plan Free, health check `/health`.
+3. Env vars: `LLM_PROVIDER=gemini`, `LLM_MODEL=gemini-2.0-flash`, `LLM_API_KEY=<your key>` (optional — without it, the regex extractor runs).
+4. Note the service URL (e.g. `https://sign-se-pehle-api.onrender.com`), set it as `NEXT_PUBLIC_API_URL` in the Vercel project, and redeploy the web app. Render free tier cold-starts, so warm the API URL once before a demo.
+
 ## Run it (MVP, verified 2026-10-24)
 
 ```bash
