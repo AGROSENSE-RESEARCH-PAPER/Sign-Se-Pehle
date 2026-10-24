@@ -17,5 +17,8 @@ def extract_text(filename: str, data: bytes) -> str:
             return "\n".join(parts)
         except Exception:
             return ""
-    # .txt / photos-as-text fallback for the MVP demo path
+    if name.endswith((".jpg", ".jpeg", ".png", ".webp")):
+        # Photos go through OCR in the caller, never through text decode.
+        return ""
+    # .txt fallback for the MVP demo path
     return data.decode("utf-8", errors="ignore")

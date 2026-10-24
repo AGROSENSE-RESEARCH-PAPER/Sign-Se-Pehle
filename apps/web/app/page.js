@@ -141,6 +141,14 @@ export default function Home() {
               {lang === "hi" ? report.summary_hi : report.summary_en}
             </p>
             <span className="chip">14 checks run · {report.verdict.toUpperCase()}</span>
+            {report.pages_to_retake?.length ? (
+              <p style={{ fontSize: 15, color: "#92400e", marginTop: 10 }}>
+                ⚠ Weak pages, please retake: {report.pages_to_retake.join(", ")}
+              </p>
+            ) : null}
+            {report.ocr_used ? (
+              <p style={{ fontSize: 14, color: "var(--muted)" }}>Read with OCR (Hindi + English) · method: {report.extraction_method}</p>
+            ) : null}
           </div>
           <h2>{t.fix}</h2>
           {report.top_cards.map((c) => (

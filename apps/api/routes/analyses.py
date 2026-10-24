@@ -7,8 +7,11 @@ import uuid
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import Response
 
+from llm.extractor_llm import extract_terms_llm
 from pipeline.extractor import extract_terms
 from pipeline.intake import extract_text
+from pipeline.ocr import ocr_available, ocr_image_bytes, ocr_pdf_bytes
+from pipeline.quote_guard import verify
 from pipeline.report import build_report
 from pipeline.rules import run_rules
 from pipeline.splitter import split_clauses
@@ -70,16 +73,55 @@ async def create_analysis(
     data = await file.read()
     if len(data) > 20 * 1024 * 1024:
         raise HTTPException(status_code=413, detail="File over 20 MB")
-    text = extract_text(file.filename or "", data)
+    fname = file.filename or ""
+    text = extract_text(fname, data)
+    ocr_used = False
+    pages_to_retake = []
     if not text.strip():
-        raise HTTPException(
-            status_code=422,
-            detail="Could not read text from this file (scanned/photo OCR is a later step)",
-        )
+        # Scanned PDF or photo: OCR path (PRD F3).
+        if not ocr_available():
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "Could not read text from this file and the OCR engine "
+                    "(tesseract + Hindi/English data) is not installed on "
+                    "this server. Install tesseract-ocr, tesseract-ocr-hin "
+                    "and tesseract-ocr-eng, then retry."
+                ),
+            )
+        ocr_used = True
+        if fname.lower().endswith(".pdf"):
+            text, pages_to_retake = ocr_pdf_bytes(data)
+        else:
+            text, conf = ocr_image_bytes(data)
+            if not text.strip() or conf < 50:
+                pages_to_retake = [1]
+        if not text.strip():
+            raise HTTPException(
+                status_code=422,
+                detail="OCR could not read this file. Please retake the weak pages and try again.",
+            )
     clauses = split_clauses(text)
     terms = extract_terms(clauses)
+    method = "regex"
+    llm_terms = extract_terms_llm(clauses)
+    if llm_terms:
+        # LLM terms win ONLY where their quote passes the guard;
+        # otherwise the code-only term for that field stands.
+        merged = dict(terms)
+        used_llm = False
+        for key, term in llm_terms.items():
+            if term["value"] is not None and verify(term, clauses):
+                merged[key] = term
+                used_llm = True
+        if used_llm:
+            terms = merged
+            method = "llm+regex"
     findings = run_rules(terms, clauses)
     report = build_report(findings, language if language in ("en", "hi") else "en")
+    report["extraction_method"] = method
+    report["ocr_used"] = ocr_used
+    report["pages_to_retake"] = pages_to_retake
     aid = uuid.uuid4().hex
     STORE[aid] = {
         "id": aid,
@@ -89,6 +131,7 @@ async def create_analysis(
         "language": language,
         "report": report,
         "terms": terms,
+        "pages_to_retake": pages_to_retake,
     }
     return {"id": aid, "status": "queued"}
 
@@ -98,7 +141,12 @@ async def get_analysis(aid: str):
     item = STORE.get(aid)
     if not item:
         raise HTTPException(status_code=404, detail="Analysis not found")
-    return {"id": aid, "status": item["status"], "step": item["step"]}
+    return {
+        "id": aid,
+        "status": item["status"],
+        "step": item["step"],
+        "pages_to_retake": item.get("pages_to_retake", []),
+    }
 
 
 @router.get("/v1/analyses/{aid}/report")

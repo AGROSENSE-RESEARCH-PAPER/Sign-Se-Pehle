@@ -40,11 +40,16 @@ npm run dev
 - `DELETE /v1/analyses/{id}` — delete document, text and report (204)
 
 ## Verified on the sample agreement
-- API: `pytest` 2 passed. Sample report verdict **red**, top cards `R-POSS-GRACE` (18-month grace), `R-INTEREST-UNEQUAL` (24% buyer vs 10% builder), `R-ARBITRATION` — every top card carries a verbatim quote.
+- API: `pytest` 7 passed (pipeline, LLM validation/fallback, OCR). Sample report verdict **red**, top cards `R-POSS-GRACE` (18-month grace), `R-INTEREST-UNEQUAL` (24% buyer vs 10% builder), `R-ARBITRATION` — every top card carries a verbatim quote.
 - Web: `npm run build` passes (Next 14.2.33, after the 14.2.5 security warning).
 
+## LLM + OCR (added 2026-10-24)
+- **LLM extractor (`apps/api/llm/`)** — provider-agnostic HTTP client, temperature 0, JSON-only. Set `LLM_PROVIDER=gemini` (default, model `LLM_MODEL`, default `gemini-2.0-flash`) or `LLM_PROVIDER=openai` with `LLM_BASE_URL` (Groq/OpenRouter/any OpenAI-compatible server), plus `LLM_API_KEY`. The LLM only extracts terms with exact quotes; the quote guard drops any term whose quote is not verbatim in its clause, and the code rule engine still decides every flag. No key set → the code-only regex extractor runs (verified: sample still red).
+- **OCR (`apps/api/pipeline/ocr.py`)** — Tesseract, Hindi + English. Scanned PDFs are rendered with `pdftoppm` and OCR'd page by page; photos are OCR'd directly. Low-confidence pages (< 50) are returned as `pages_to_retake` on the status/report and shown in the web UI. If tesseract is not installed on the server, the API returns a clear 422 telling you to install `tesseract-ocr`, `tesseract-ocr-hin`, `tesseract-ocr-eng` instead of failing silently.
+- Verified: photo of a sample clause → OCR → grace + arbitration flags, verdict red; mocked-LLM test — an invented "99-month" claim was dropped by the quote guard while the real 18-month claim stood.
+
 ## Honest MVP limits (next steps, in order)
-1. **No LLM, no OCR yet.** Extraction is regex/code-only; scanned/photo PDFs without a text layer return a 422 asking for a retake. LLM extractor + OCR (Hindi/English) is the next pipeline step.
+1. **LLM needs a key, OCR needs tesseract on the server.** Neither is bundled; both degrade cleanly (regex fallback / clear 422).
 2. **8 rules, not 20–25**, and provision text is **not yet verified** against the official RERA Act / state rules — a person must verify every provision before any public launch.
 3. **One baseline rule set, not one state.** The v1 state is still undecided.
 4. **PDF is English-only** (standard PDF fonts do not render Devanagari).
