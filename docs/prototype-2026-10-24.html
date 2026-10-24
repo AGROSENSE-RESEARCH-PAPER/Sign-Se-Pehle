@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign Se Pehle — Before you sign</title>
+<style>
+  :root{
+    --maroon:#6d1a2d; --maroon-dark:#4d1120; --saffron:#e87722; --saffron-dark:#c85f10;
+    --ivory:#fdf8ec; --paper:#fffdf6; --teal:#0f766e; --ink:#2b1a1e; --muted:#6f5b5e;
+    --gold:#c9a227; --line:#e8dcc3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9dfc8;font-family:"Noto Sans Devanagari","Noto Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink)}
+  .phone{max-width:430px;margin:0 auto;background:var(--ivory);min-height:100vh;position:relative;overflow:hidden;
+    background-image:url("assets/floral-swirl.jpg");background-size:340px;background-repeat:repeat;background-blend-mode:multiply;opacity:1}
+  .phone::before{content:"";position:absolute;inset:0;background:rgba(253,248,236,.88);pointer-events:none}
+  .phone>*{position:relative}
+  /* Toran strip — home screen only */
+  .toran{height:16px;background-image:url("assets/paisley.jpg");background-size:220px;opacity:.9;position:relative}
+  .toran::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:14px;
+    background:radial-gradient(circle at 10px 0,#e87722 7px,transparent 8px) 0 0/28px 14px repeat-x,linear-gradient(rgba(253,248,236,0),rgba(253,248,236,0));}
+  header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 4px}
+  .brand{font-weight:800;color:var(--maroon);font-size:19px;letter-spacing:.2px}
+  .brand span{color:var(--saffron)}
+  .lang{display:flex;border:1.5px solid var(--maroon);border-radius:999px;overflow:hidden}
+  .lang button{border:0;background:transparent;padding:9px 13px;font-size:14px;min-height:44px;cursor:pointer;color:var(--maroon);font-weight:700}
+  .lang button.active{background:var(--maroon);color:#fff}
+  main{padding:6px 20px 28px}
+  h1{font-size:34px;line-height:1.12;color:var(--maroon);margin:16px 0 8px}
+  h1 em{font-style:normal;color:var(--saffron-dark)}
+  .sub{font-size:17px;line-height:1.55;color:var(--muted);margin:0 0 20px}
+  .hero{border-radius:18px;overflow:hidden;position:relative;margin:4px 0 20px;border:1px solid var(--line)}
+  .hero img{width:100%;height:170px;object-fit:cover;display:block;mix-blend-mode:multiply;filter:saturate(.9)}
+  .hero .cap{position:absolute;left:14px;bottom:12px;background:rgba(253,248,236,.92);color:var(--maroon);font-weight:800;padding:8px 12px;border-radius:999px;font-size:14px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border-radius:14px;border:0;font-size:17px;font-weight:800;cursor:pointer;padding:12px 16px;text-decoration:none}
+  .btn-saffron{background:var(--saffron);color:#fff}
+  .btn-saffron:hover{background:var(--saffron-dark)}
+  .btn-maroon{background:var(--maroon);color:#fff}
+  .btn-ghost{background:transparent;color:var(--maroon);border:1.5px solid var(--maroon)}
+  .btn-teal{background:var(--teal);color:#fff}
+  .fine{font-size:14px;color:var(--muted);text-align:center;margin:10px 0 22px;line-height:1.5}
+  h2{font-size:21px;color:var(--maroon);margin:26px 0 12px}
+  /* Opposite-sweep cards — light cards flood maroon on hover/focus, text turns ivory */
+  .card{position:relative;overflow:hidden;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 12px;cursor:pointer}
+  .card::after{content:"";position:absolute;inset:0;background:var(--maroon);transform:translateY(101%);transition:transform .35s ease;z-index:0}
+  .card:hover::after,.card:focus-within::after{transform:translateY(0)}
+  .card>*{position:relative;z-index:1;transition:color .35s ease}
+  .card:hover>*{color:#fff}
+  .card:hover .muted{color:#f3d9c2}
+  .card h3{margin:0 0 4px;font-size:17px}
+  .card p,.muted{margin:0;font-size:15px;line-height:1.5;color:var(--muted)}
+  .num{font-size:13px;font-weight:800;letter-spacing:1.5px;color:var(--saffron-dark);text-transform:uppercase}
+  .card:hover .num{color:#ffcf9e}
+  .verdict-wrap{text-align:center;padding:10px 0 4px}
+  .circle{width:118px;height:118px;border-radius:50%;background:#f59e0b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;letter-spacing:1px;margin:6px auto 14px;box-shadow:0 0 0 10px rgba(245,158,11,.18)}
+  .verdict-line{font-size:22px;font-weight:800;color:var(--maroon);margin:0 0 6px}
+  .chip{display:inline-block;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:999px;padding:6px 11px;font-size:13px;font-weight:700}
+  .steps{display:grid;gap:8px;margin:14px 0}
+  .step{display:flex;gap:10px;align-items:center;font-size:16px}
+  .dot{width:28px;height:28px;border-radius:50%;background:var(--line);color:var(--maroon);display:flex;align-items:center;justify-content:center;font-weight:800;flex:0 0 28px}
+  .step.done .dot{background:var(--teal);color:#fff}
+  .sheet{position:fixed;left:50%;transform:translate(-50%,110%);bottom:0;width:100%;max-width:430px;background:var(--paper);border-radius:22px 22px 0 0;padding:22px 20px 28px;box-shadow:0 -12px 40px rgba(0,0,0,.25);transition:transform .35s ease;z-index:20;max-height:78vh;overflow:auto}
+  .sheet.open{transform:translate(-50%,0)}
+  .sheet blockquote{margin:12px 0;padding:12px 14px;border-left:4px solid var(--saffron);background:#fff7e8;font-size:15px;line-height:1.6;color:var(--ink)}
+  .close{float:right;border:0;background:var(--line);width:44px;height:44px;border-radius:50%;font-size:20px;cursor:pointer}
+  .row{display:flex;gap:10px;margin-top:12px}
+  .row>*{flex:1}
+  .disclaimer{font-size:13px;line-height:1.55;color:var(--muted);text-align:center;margin-top:22px}
+  .hidden{display:none}
+  .tick{color:var(--teal);font-weight:800}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="toran" id="toran"></div>
+  <header>
+    <div class="brand">Sign <span>Se</span> Pehle</div>
+    <div class="lang" role="group" aria-label="Language">
+      <button id="btn-en" class="active" onclick="setLang('en')">English</button>
+      <button id="btn-hi" onclick="setLang('hi')">हिन्दी</button>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <main id="screen-home">
+    <h1 id="h1">Before you sign,<br><em>know what to ask.</em></h1>
+    <p class="sub" id="sub">Upload your builder-buyer agreement. In under 2 minutes, see which clauses to question — in plain words, not legal jargon.</p>
+    <div class="hero"><img src="assets/marble-gold.jpg" alt=""><span class="cap" id="hero-cap">Your agreement, made clear</span></div>
+    <button class="btn btn-saffron" onclick="startSample()" id="upload-btn">⬆ Upload agreement</button>
+    <button class="btn btn-ghost" style="margin-top:10px" onclick="startSample()" id="sample-btn">Try a sample agreement</button>
+    <p class="fine" id="fine">No sign-up. Your file is not stored.<br>Delete it any time, in one tap.</p>
+    <h2 id="how-h">How it works</h2>
+    <div class="card"><span class="num">01</span><h3 id="s1t">Upload a PDF or photos</h3><p id="s1p">From WhatsApp, your files, or your camera. Up to 20 MB, or 8 photos.</p></div>
+    <div class="card"><span class="num">02</span><h3 id="s2t">We check it against the rules</h3><p id="s2p">Possession, penalties, exit and dispute clauses — every flag quotes your own words.</p></div>
+    <div class="card"><span class="num">03</span><h3 id="s3t">You get one clear answer</h3><p id="s3p">Green, amber or red — plus at most 3 things to fix first, and questions to send the builder.</p></div>
+    <p class="disclaimer" id="disc">This is a checklist, not legal advice. Ask a lawyer before you sign.</p>
+  </main>
+
+  <!-- READING -->
+  <main id="screen-reading" class="hidden">
+    <h1 id="read-h">Reading your agreement…</h1>
+    <p class="sub" id="read-sub">Your file is not stored. We only read what we need to check.</p>
+    <div class="steps" id="steps">
+      <div class="step" data-i="0"><span class="dot">1</span><span>Reading pages</span></div>
+      <div class="step" data-i="1"><span class="dot">2</span><span>Splitting clauses</span></div>
+      <div class="step" data-i="2"><span class="dot">3</span><span>Checking rules</span></div>
+      <div class="step" data-i="3"><span class="dot">4</span><span>Preparing your report</span></div>
+    </div>
+  </main>
+
+  <!-- VERDICT -->
+  <main id="screen-verdict" class="hidden">
+    <div class="verdict-wrap">
+      <div class="circle">AMBER</div>
+      <p class="verdict-line" id="verdict-line">Ask 3 things before you sign.</p>
+      <span class="chip" id="chip">Sample agreement · 14 checks run</span>
+    </div>
+    <h2 id="fix-h">Fix these first</h2>
+    <div id="cards"></div>
+    <h2 id="all-h">All checks</h2>
+    <p style="font-size:16px;line-height:1.7"><span class="tick">✓</span> Carpet area matches the plan &nbsp;·&nbsp; <span class="tick">✓</span> Total price stated &nbsp;·&nbsp; <span class="tick">✓</span> No hidden transfer fee &nbsp;·&nbsp; <span class="tick">✓</span> Refund clause present<br><span style="color:#b45309;font-weight:800">!</span> 3 flags above &nbsp;·&nbsp; 11 checks clear</p>
+    <div class="row"><button class="btn btn-maroon" onclick="copyQs()" id="copy-btn">Copy questions</button><a class="btn btn-teal" id="wa-btn" href="#" target="_blank">WhatsApp</a></div>
+    <div class="row"><button class="btn btn-ghost" onclick="window.print()" id="pdf-btn">One-page PDF</button><button class="btn btn-ghost" onclick="resetAll()" id="del-btn">Delete file</button></div>
+    <p class="disclaimer" id="disc2">This is a checklist, not legal advice. Ask a lawyer before you sign.</p>
+  </main>
+</div>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <button class="close" onclick="closeSheet()" aria-label="Close">×</button>
+  <span class="num" id="sheet-num">Clause 7 · Page 9</span>
+  <h3 id="sheet-title" style="font-size:20px;color:var(--maroon);margin:6px 0"></h3>
+  <p class="muted" id="sheet-meaning"></p>
+  <blockquote id="sheet-quote"></blockquote>
+  <p style="font-weight:800;color:var(--maroon)">What to ask →</p>
+  <p id="sheet-ask" style="font-size:16px;line-height:1.55"></p>
+  <button class="btn btn-saffron" onclick="closeSheet()" style="margin-top:10px">Got it</button>
+</div>
+
+<script>
+const STR = {
+  en: {h1:'Before you sign,<br><em>know what to ask.</em>', sub:'Upload your builder-buyer agreement. In under 2 minutes, see which clauses to question — in plain words, not legal jargon.', cap:'Your agreement, made clear', up:'⬆ Upload agreement', sample:'Try a sample agreement', fine:'No sign-up. Your file is not stored.<br>Delete it any time, in one tap.', how:'How it works', s1t:'Upload a PDF or photos', s1p:'From WhatsApp, your files, or your camera. Up to 20 MB, or 8 photos.', s2t:'We check it against the rules', s2p:'Possession, penalties, exit and dispute clauses — every flag quotes your own words.', s3t:'You get one clear answer', s3p:'Green, amber or red — plus at most 3 things to fix first, and questions to send the builder.', disc:'This is a checklist, not legal advice. Ask a lawyer before you sign.', read:'Reading your agreement…', readsub:'Your file is not stored. We only read what we need to check.', verdict:'Ask 3 things before you sign.', chip:'Sample agreement · 14 checks run', fix:'Fix these first', all:'All checks', copy:'Copy questions', pdf:'One-page PDF', del:'Delete file'},
+  hi: {h1:'Sign karne se <em>pehle, jaan lo.</em>', sub:'Apna builder-buyer agreement upload karo. 2 minute se kam mein jaano kaunsi shartein poochni hain — seedhe shabdon mein, kanooni bhasha mein nahi.', cap:'Aapka agreement, ab saaf-saaf', up:'⬆ Agreement upload karo', sample:'Sample agreement try karo', fine:'Koi sign-up nahi. Aapki file save nahi hoti.<br>Ek tap mein kabhi bhi delete karo.', how:'Kaise kaam karta hai', s1t:'PDF ya photo upload karo', s1p:'WhatsApp, files ya camera se. 20 MB tak, ya 8 photos.', s2t:'Hum ise niyamon se milate hain', s2p:'Possession, jurmana, exit aur vivad wali shartein — har flag mein aapke hi shabd honge.', s3t:'Ek saaf jawab milta hai', s3p:'Green, amber ya red — aur sabse pehle theek karne wali zyada se zyada 3 cheezein, builder ko bhejne wale sawalon ke saath.', disc:'Ye checklist hai, kanooni salah nahi. Sign karne se pehle ek lawyer se poochhein.', read:'Aapka agreement padha ja raha hai…', readsub:'Aapki file save nahi hoti. Sirf wahi padha jata hai jo check karna hai.', verdict:'Sign karne se pehle 3 baatein poochhein.', chip:'Sample agreement · 14 checks chale', fix:'Pehle ye theek karwao', all:'Saare checks', copy:'Sawal copy karo', pdf:'Ek page ka PDF', del:'File delete karo'}
+};
+const CARDS = [
+  {ref:'Clause 7 · Page 9', en:{t:'Possession date can slip by 18 months', m:'The builder gets 18 extra months after the promised date.', q:'"The Promoter shall be entitled to a grace period of eighteen (18) months beyond the possession date."', a:'Ask the builder to remove the grace period.'}, hi:{t:'Possession date 18 mahine khisak sakti hai', m:'Builder ko promised date ke baad 18 mahine extra milte hain.', q:'"The Promoter shall be entitled to a grace period of eighteen (18) months beyond the possession date."', a:'Builder se grace period hatane ko kaho.'}},
+  {ref:'Clause 11 · Page 14', en:{t:'You pay 24% on late dues, builder pays far less', m:'The penalty is not equal on both sides.', q:'"Interest at 24% per annum, compounded monthly, shall be payable by the Allottee on delayed payments."', a:'Ask for the same interest rate on both sides.'}, hi:{t:'Aap 24% doge, builder bahut kam dega', m:'Jurmana dono taraf barabar nahi hai.', q:'"Interest at 24% per annum, compounded monthly, shall be payable by the Allottee on delayed payments."', a:'Dono taraf ek hi interest rate maango.'}},
+  {ref:'Clause 19 · Page 21', en:{t:'Disputes sent to arbitration', m:'This can keep a dispute away from the RERA authority.', q:'"All disputes shall be referred to arbitration under the Arbitration and Conciliation Act, 1996."', a:'Ask that RERA remedies stay available to you.'}, hi:{t:'Vivad arbitration mein bheja jayega', m:'Isse vivad RERA authority se door ho sakta hai.', q:'"All disputes shall be referred to arbitration under the Arbitration and Conciliation Act, 1996."', a:'Poochho ki RERA wale upay aapke liye khule rahein.'}}
+];
+let lang = 'en';
+function setLang(l){
+  lang = l;
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-hi').classList.toggle('active', l==='hi');
+  const s = STR[l];
+  document.getElementById('h1').innerHTML = s.h1; document.getElementById('sub').textContent = s.sub;
+  document.getElementById('hero-cap').textContent = s.cap; document.getElementById('upload-btn').textContent = s.up;
+  document.getElementById('sample-btn').textContent = s.sample; document.getElementById('fine').innerHTML = s.fine;
+  document.getElementById('how-h').textContent = s.how; document.getElementById('s1t').textContent = s.s1t; document.getElementById('s1p').textContent = s.s1p;
+  document.getElementById('s2t').textContent = s.s2t; document.getElementById('s2p').textContent = s.s2p; document.getElementById('s3t').textContent = s.s3t; document.getElementById('s3p').textContent = s.s3p;
+  document.getElementById('disc').textContent = s.disc; document.getElementById('read-h').textContent = s.read; document.getElementById('read-sub').textContent = s.readsub;
+  document.getElementById('verdict-line').textContent = s.verdict; document.getElementById('chip').textContent = s.chip; document.getElementById('fix-h').textContent = s.fix;
+  document.getElementById('all-h').textContent = s.all; document.getElementById('copy-btn').textContent = s.copy; document.getElementById('pdf-btn').textContent = s.pdf; document.getElementById('del-btn').textContent = s.del; document.getElementById('disc2').textContent = s.disc;
+  renderCards();
+}
+function renderCards(){
+  const wrap = document.getElementById('cards'); wrap.innerHTML = '';
+  CARDS.forEach((c, i) => {
+    const d = c[lang];
+    const el = document.createElement('div'); el.className = 'card'; el.tabIndex = 0;
+    el.innerHTML = '<span class="num">! ' + c.ref + '</span><h3>' + d.t + '</h3><p>' + d.m + ' ›</p>';
+    el.onclick = () => openSheet(i); el.onkeydown = (e) => { if(e.key==='Enter') openSheet(i); };
+    wrap.appendChild(el);
+  });
+  const qs = CARDS.map(c => '• ' + c[lang].a).join('\n');
+  document.getElementById('wa-btn').href = 'https://wa.me/?text=' + encodeURIComponent('Before I sign, I would like to ask:\n' + qs);
+  document.getElementById('wa-btn').textContent = lang==='hi' ? 'WhatsApp par bhejo' : 'WhatsApp';
+}
+function openSheet(i){
+  const c = CARDS[i], d = c[lang];
+  document.getElementById('sheet-num').textContent = c.ref;
+  document.getElementById('sheet-title').textContent = d.t;
+  document.getElementById('sheet-meaning').textContent = d.m;
+  document.getElementById('sheet-quote').textContent = d.q;
+  document.getElementById('sheet-ask').textContent = d.a;
+  document.getElementById('sheet').classList.add('open');
+}
+function closeSheet(){ document.getElementById('sheet').classList.remove('open'); }
+function show(id){
+  ['screen-home','screen-reading','screen-verdict'].forEach(x => document.getElementById(x).classList.toggle('hidden', x!==id));
+  document.getElementById('toran').style.display = id==='screen-home' ? 'block' : 'none';
+  window.scrollTo(0,0);
+}
+function startSample(){
+  show('screen-reading');
+  const steps = document.querySelectorAll('#steps .step');
+  steps.forEach(s => s.classList.remove('done'));
+  steps.forEach((s, i) => setTimeout(() => s.classList.add('done'), 450*(i+1)));
+  setTimeout(() => { renderCards(); show('screen-verdict'); }, 2000);
+}
+function copyQs(){
+  const qs = CARDS.map(c => '• ' + c[lang].a).join('\n');
+  const txt = (lang==='hi' ? 'Sign karne se pehle main ye poochna chahta hun:\n' : 'Before I sign, I would like to ask:\n') + qs;
+  if (navigator.clipboard) navigator.clipboard.writeText(txt);
+  document.getElementById('copy-btn').textContent = lang==='hi' ? 'Copy ho gaya ✓' : 'Copied ✓';
+  setTimeout(() => document.getElementById('copy-btn').textContent = STR[lang].copy, 1800);
+}
+function resetAll(){ closeSheet(); show('screen-home'); }
+renderCards();
+</script>
+</body>
+</html>
