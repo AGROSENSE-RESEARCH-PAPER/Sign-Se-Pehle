@@ -9,3 +9,4 @@ uploads/
 .pytest_cache/
 .env.local
 out/
+dist/
