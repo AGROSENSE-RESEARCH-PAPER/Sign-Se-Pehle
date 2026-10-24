@@ -11,6 +11,8 @@ Upload a builder-buyer Agreement for Sale, get one clear verdict before you sign
 
 ## Live demo
 - **Web (GitHub Pages, public):** https://agrosense-research-paper.github.io/Sign-Se-Pehle/
+  - Since 2026-10-24 this URL serves Vidish's Figma UI in `apps/figma-ui/` (Vite, synthetic demo journey: home → state → reading → 3-question sample report → next steps). It has **no real upload and no API calls** — it is a UI demo, not the full product.
+  - The previous Next.js v1 app is still in the repo under `apps/web/` but is **not** built or deployed by `.github/workflows/pages.yml` anymore. Revert that workflow to restore v1 on Pages.
 - **Web (Vercel, public, backup):** https://sign-se-pehle-h34ud34ce-vivekbartwal158-5099s-projects.vercel.app/
 - **API:** not deployed yet — deploy it with the Render blueprint below, then set the repo variable `NEXT_PUBLIC_API_URL` (and the Vercel env var, for the Vercel copy) and redeploy. Until then the web demo shows the planted-issue sample report (labelled as a sample) when the API is unreachable.
 - **Note:** GitHub Pages hosts static sites only — it cannot run the FastAPI backend. The Pages site is the frontend; the API still needs Render (or any Python host).
@@ -30,15 +32,21 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 # -> http://localhost:8000/docs
 
-# Web (terminal 2) — from apps/web/
+# Web v1 (terminal 2) — from apps/web/ (NOT deployed on Pages since 2026-10-24)
 npm install
 npm run dev
 # -> http://localhost:3000  (calls the API at http://localhost:8000;
 #    override with NEXT_PUBLIC_API_URL)
+
+# Live Pages UI (terminal 2, alternative) — from apps/figma-ui/
+npm install
+npm run dev
+# -> http://localhost:5173  (synthetic demo only, no API)
 ```
 
 ## Layout
-- `apps/web/` — Next.js 14 app (mobile-first, `app/page.js`, components `VerdictCircle`, `FlagCard`, `ClauseSheet`, `LangToggle`, strings in `messages/en.json`, `messages/hi.json`, textures in `public/assets/`). Design: deep maroon / saffron / ivory / peacock teal, toran strip on home only, BLEND rule (textures melt into the ivory surface), opposite-sweep cards.
+- `apps/figma-ui/` — Vite UI currently deployed on GitHub Pages (Vidish, 2026-10-24): `index.html`, `app.js`, `styles.css`. Synthetic demo only.
+- `apps/web/` — Next.js 14 app (v1, retained but not deployed on Pages since 2026-10-24) (mobile-first, `app/page.js`, components `VerdictCircle`, `FlagCard`, `ClauseSheet`, `LangToggle`, strings in `messages/en.json`, `messages/hi.json`, textures in `public/assets/`). Design: deep maroon / saffron / ivory / peacock teal, toran strip on home only, BLEND rule (textures melt into the ivory surface), opposite-sweep cards.
 - `apps/api/` — FastAPI service. Pipeline in order: intake → clause splitter → extractor → rule engine → quote guard → report builder. Tests in `apps/api/tests/` (`pytest`).
 - `rules/baseline.json` — 8 baseline rules (PRD target is 20–25 for one state).
 - `eval/sample_agreement.txt` — planted-issue sample agreement used by the tests and the web "Try a sample" button.
@@ -53,7 +61,8 @@ npm run dev
 
 ## Verified on the sample agreement
 - API: `pytest` 7 passed (pipeline, LLM validation/fallback, OCR). Sample report verdict **red**, top cards `R-POSS-GRACE` (18-month grace), `R-INTEREST-UNEQUAL` (24% buyer vs 10% builder), `R-ARBITRATION` — every top card carries a verbatim quote.
-- Web: `npm run build` passes (Next 14.2.33, after the 14.2.5 security warning).
+- Web v1: `npm run build` passes (Next 14.2.33, after the 14.2.5 security warning).
+- Pages UI: `npm run build` passes (Vite 6, relative `./` base so it works under `/Sign-Se-Pehle/`).
 
 ## LLM + OCR (added 2026-10-24)
 - **LLM extractor (`apps/api/llm/`)** — provider-agnostic HTTP client, temperature 0, JSON-only. Set `LLM_PROVIDER=gemini` (default, model `LLM_MODEL`, default `gemini-2.0-flash`) or `LLM_PROVIDER=openai` with `LLM_BASE_URL` (Groq/OpenRouter/any OpenAI-compatible server), plus `LLM_API_KEY`. The LLM only extracts terms with exact quotes; the quote guard drops any term whose quote is not verbatim in its clause, and the code rule engine still decides every flag. No key set → the code-only regex extractor runs (verified: sample still red).
